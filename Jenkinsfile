@@ -1,15 +1,27 @@
 pipeline {
- agent any
- environment {
- DOCKER_USER = 'mon-utilisateur-docker'
- }
- stages {
- stage('Login Docker') {
- steps {
- withCredentials([string(credentialsId: 'DOCKER_PASSWORD_CHRISTIAN', variable: 'DOCKER_PASS')]) {
- sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin'
- }
- }
- }
- }
+    agent any
+    stages {
+        stage('Compilation & Tests') {
+            parallel {
+                stage('Build') {
+                    steps {
+                        echo "Compilation en cours..."
+                        sh 'sleep 3' // Simulation du build
+                    }
+                }
+                stage('Tests Unitaires') {
+                    steps {
+                        echo "Exécution des tests unitaires..."
+                        sh 'sleep 2' // Simulation des tests unitaires
+                    }
+                }
+                stage('Analyse Qualité') {
+                    steps {
+                        echo "Analyse statique du code avec SonarQube..."
+                        sh 'sleep 4' // Simulation de l’analyse
+                    }
+                }
+            }
+        }
+    }
 }
