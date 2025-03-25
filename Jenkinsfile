@@ -1,28 +1,19 @@
 pipeline {
     agent any
     environment {
-        APP_NAME = 'my-app'
+        ARTIFACT_NAME = 'app.tar.gz'
     }
     stages {
         stage('Build') {
             steps {
-                script {
-                    def buildVersion = "1.0.${env.BUILD_NUMBER}"
-                    echo "Building ${APP_NAME} version ${buildVersion}"
-                }
-            }
-        }
-        stage('Test') {
-            steps {
-                echo "Testing ${APP_NAME}..."
+                sh 'echo "Contenu de l\'application" > app.txt'
+                sh 'tar -czf ${ARTIFACT_NAME} app.txt'
+                archiveArtifacts artifacts: ARTIFACT_NAME, fingerprint: true
             }
         }
         stage('Deploy') {
             steps {
-                script {
-                    def buildVersion = "1.0.${env.BUILD_NUMBER}"
-                    echo "Deploying ${APP_NAME} version ${buildVersion}"
-                }
+                echo "Déploiement de ${ARTIFACT_NAME}"
             }
         }
     }
